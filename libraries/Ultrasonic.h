@@ -1,5 +1,5 @@
-#ifndef _Ultrasonic_H    // Put these two lines at the top of your file.
-#define _Ultrasonic_H    // (Use a suitable name, usually based on the file name.)
+#ifndef _Ultrasonic_H   
+#define _Ultrasonic_H
 
  class Ultrasonic {
   private:
@@ -81,4 +81,4 @@
   }  
 };
 
-#endif // _HEADERFILE_H    // Put this line at the end of your file.
+#endif
