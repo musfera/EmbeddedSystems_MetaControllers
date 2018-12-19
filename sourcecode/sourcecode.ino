@@ -8,16 +8,14 @@
 #include "Ultrasonic.h"
 #include "Arduino.h"
 
-
 #define rightRumble 5
 #define leftRumble  6
 #define compassMotorPin 3 
 
 /*============ Initialize Sensors and Motors ===================== */
 Servo compassMotor;
-Ultrasonic us1(1,2);
-Ultrasonic us2(7,8);
-Ultrasonic uscenter(9,10);
+Ultrasonic us1(7,8);
+Ultrasonic us2(4,9);
 Adafruit_LSM303_Mag_Unified mag = Adafruit_LSM303_Mag_Unified(12345); //Assign a unique ID to this sensor at the same time
 
 /*============ Rumble Motor Functions ============================= */
@@ -69,7 +67,6 @@ void setup(void)
 
   //motor for magnetometer
   compassMotor.attach(compassMotorPin); 
-  compassMotor.write(0); 
   
   //rumble motors
   pinMode(rightRumble, OUTPUT);
@@ -84,51 +81,29 @@ void loop(void)
   mag.getEvent(&event);
   long us1distance = us1.ranging();
   long us2distance = us2.ranging();
-  long uscenterdistance = uscenter.ranging();
   float Pi = 3.14159;
   
   // Calculate the angle of the vector y,x
-  float heading = (atan2(event.magnetic.y,event.magnetic.x) * 180) / Pi;
+  float heading = (atan2(event.magnetic.y,event.magnetic.x) * 180) / Pi + 180;
 
-  // Normalize to 0-360
-  if (heading < 0){  
-   // heading = 360 + heading;
-    compassMotor.write(heading);
-    delay(50);     
+  compassMotor.write(heading);
+  delay(10);
+  
+  if(us2distance < 50 && us2distance > 0){
+    analogWrite(leftRumble, 100);
   }
-
-  if (heading > 0){
-     compassMotor.write(heading); 
-      delay(50); 
+  else if(us1distance < 50 && us1distance > 0){
+    analogWrite(rightRumble, 100);
   }
-
-  if(uscenterdistance < 100){
-    analogWrite(leftRumble, 150);
-    analogWrite(rightRumble, 150);
-  }
-  else if(us1distance < 50){
-    analogWrite(leftRumble, 150);
-  }
-  else if(us2distance < 50){
-    analogWrite(rightRumble, 150);
-  }
-  else if(us1distance >= 50){
-    analogWrite(leftRumble, 0);
-  }
-  else if(us2distance >= 50){
-    analogWrite(rightRumble, 0);
-  }
-  else if(uscenterdistance >=100){
+  else{
     analogWrite(leftRumble, 0);
     analogWrite(rightRumble, 0);
   }
   
-//  Serial.print("Compass Heading: ");
-//  Serial.println(heading);
-//  Serial.print(us1distance);
-//  Serial.print("cm - ");
-//  Serial.print(uscenterdistance);
-//  Serial.print("cm - ");
-//  Serial.print(us2distance);
-//  Serial.println("cm");
+  Serial.print("Compass Heading: ");
+  Serial.println(heading);
+  Serial.print(us1distance);
+  Serial.print("cm us1 - ");
+  Serial.print(us2distance);
+  Serial.println("cm us2");
 } //end loop
