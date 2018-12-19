@@ -90,10 +90,16 @@ void loop(void)
   delay(10);
   
   if(us2distance < 50 && us2distance > 0){
-    analogWrite(leftRumble, 100);
+    analogWrite(leftRumble,30);
+    if(us2distance < 20 && us2distance > 0){
+      analogWrite(leftRumble,60);
+    }
   }
   else if(us1distance < 50 && us1distance > 0){
-    analogWrite(rightRumble, 100);
+    analogWrite(rightRumble,30);
+    if(us1distance < 20 && us1distance > 0){
+      analogWrite(rightRumble,60);
+    }
   }
   else{
     analogWrite(leftRumble, 0);
